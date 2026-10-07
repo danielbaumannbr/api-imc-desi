@@ -9,7 +9,7 @@ app.get('/', (req, res) => {
 })
 app.get('/relatorio',async (req, res) => {
   try {
-    const [rows]=await db.execute('select * from clientes');
+    const [rows]=await db.execute('select * from pacientes');
     res.status(200).json(rows);
   } catch (error) {
     res.status(500).json({
