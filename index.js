@@ -105,7 +105,7 @@ app.put('/paciente/:id',async(req,res)=>{
   const {imc,status}=calcularIMC(Number(peso),Number(altura));
   try {
       const [rows] = await db.execute('UPDATE `pacientes` SET `nome` = ?, `idade` = ?, `altura` = ?, `peso` = ?, `imc` = ?, `status` = ? WHERE `pacientes`.`id` = ?;', [nome,idade,altura,peso,imc,status,id]);
-      res.status(201).json({mensagem:"Paciente atualizado com sucesso."  
+      res.status(200).json({mensagem:"Paciente atualizado com sucesso."  
       });
   } catch (error) {
     res.status(500).json({
