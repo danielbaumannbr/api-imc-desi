@@ -31,7 +31,7 @@ app.get('/paciente/obesidade', async (req, res) => {
       detalhes: error.message
     });
   }
-})
+})/*
 app.get('/paciente/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -51,7 +51,25 @@ app.get('/paciente/:id', async (req, res) => {
     });
   }
 })
+*/
+app.get('/paciente/:id', async (req, res) => {
+  const { id } = req.params;
 
+  try {
+    const [rows] = await db.execute('select * from pacientes where id=?', [id]);
+    if (rows.length === 0) {
+      return res.status(404).json({
+        mensagem: "Paciente não encontrado"
+      });
+    }
+    res.status(200).json(rows[0]);
+  } catch (error) {
+    res.status(500).json({
+      mensagem: "Erro Interno do Servidor",
+      detalhes: error.message
+    });
+  }
+});
 app.post('/paciente',async(req,res)=>{
   const {nome,idade,altura,peso}=req.body;
   if(!nome||!idade||!altura||!peso){
@@ -120,6 +138,15 @@ app.delete('/paciente/:id', async (req, res) => {
     });
   }
 })
+/*
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
-})
+})*/
+// Exemplo de correção no final do app.js:
+module.exports = app;
+
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Servidor rodando na porta ${port}`);
+  });
+}
