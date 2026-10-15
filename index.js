@@ -69,7 +69,7 @@ app.get('/paciente/:id', async (req, res) => {
       detalhes: error.message
     });
   }
-});
+});/*
 app.post('/paciente',async(req,res)=>{
   const {nome,idade,altura,peso}=req.body;
   if(!nome||!idade||!altura||!peso){
@@ -96,7 +96,40 @@ app.post('/paciente',async(req,res)=>{
       detalhes: error.message
     });
   }
-})
+})*/
+app.post('/paciente', async (req, res) => {
+  const { nome, idade, altura, peso } = req.body;
+
+  if (!nome || !idade || !altura || !peso) {
+    return res.status(400).json({
+      mensagem: "Verifique se todos os campos estão preenchidos"
+    });
+  }
+
+  const { imc, status } = calcularIMC(Number(peso), Number(altura));
+
+  try {
+    const [rows] = await db.execute(
+      'INSERT INTO `pacientes` (`nome`, `idade`, `altura`, `peso`, `imc`, `status`) VALUES (?,?,?,?,?,?);',
+      [nome, idade, altura, peso, imc, status]
+    );
+
+    res.status(201).json({
+      id: rows.insertId,
+      nome,
+      idade,
+      altura,
+      peso,
+      imc,
+      status
+    });
+  } catch (error) {
+    res.status(500).json({
+      mensagem: "Erro Interno do Servidor",
+      detalhes: error.message
+    });
+  }
+});
 app.put('/paciente/:id',async(req,res)=>{
   const { id } = req.params;
   const {nome,idade,altura,peso}=req.body;
@@ -118,7 +151,25 @@ app.put('/paciente/:id',async(req,res)=>{
     });
   }
 })
+app.delete('/paciente/:id', async (req, res) => {
+  const { id } = req.params;
 
+  try {
+    const [rows] = await db.execute('delete from pacientes where id=?', [id]);
+    if (rows.affectedRows === 0) {
+      return res.status(404).json({
+        mensagem: "Paciente não encontrado"
+      });
+    }
+    res.status(200).json({ mensagem: "Paciente apagado com sucesso" });
+  } catch (error) {
+    res.status(500).json({
+      mensagem: "Erro Interno do Servidor",
+      detalhes: error.message
+    });
+  }
+});
+/*
 app.delete('/paciente/:id', async (req, res) => {
   const { id } = req.params;
 
@@ -138,7 +189,7 @@ app.delete('/paciente/:id', async (req, res) => {
     });
   }
 })
-/*
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })*/
