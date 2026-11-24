@@ -51,26 +51,26 @@ app.get('/paciente/:id', async (req, res) => {
   }
 })
 
-app.post('/paciente',async(req,res)=>{
-  const {nome,idade,altura,peso}=req.body;
-  if(!nome||!idade||!altura||!peso){
-      return res.status(400).json({
-        mensagem: "Verifique se todos os campos estão preenchidos",
-        detalhes: error.message
-      });
+app.post('/paciente', async (req, res) => {
+  const { nome, idade, altura, peso } = req.body;
+  if (!nome || !idade || !altura || !peso) {
+    return res.status(400).json({
+      mensagem: "Verifique se todos os campos estão preenchidos",
+      detalhes: error.message
+    });
   }
-  const {imc,status}=calcularIMC(Number(peso),Number(altura));
+  const { imc, status } = calcularIMC(Number(peso), Number(altura));
   try {
-      const [rows] = await db.execute('INSERT INTO `pacientes` (`nome`, `idade`, `altura`, `peso`, `imc`, `status`) VALUES (?,?,?,?,?,?);', [nome,idade,altura,peso,imc,status]);
-      res.status(201).json({
-        id:rows.insertId,
-        nome,
-        idade,
-        altura,
-        peso,
-        imc,
-        status
-      });
+    const [rows] = await db.execute('INSERT INTO `pacientes` (`nome`, `idade`, `altura`, `peso`, `imc`, `status`) VALUES (?,?,?,?,?,?);', [nome, idade, altura, peso, imc, status]);
+    res.status(201).json({
+      id: rows.insertId,
+      nome,
+      idade,
+      altura,
+      peso,
+      imc,
+      status
+    });
   } catch (error) {
     res.status(500).json({
       mensagem: "Erro Interno do Servidor",
@@ -78,27 +78,34 @@ app.post('/paciente',async(req,res)=>{
     });
   }
 })
-app.put('/paciente/:id',async(req,res)=>{
+app.put('/paciente/:id', (req, res) => {
   const { id } = req.params;
-  const {nome,idade,altura,peso}=req.body;
-  if(!nome||!idade||!altura||!peso||!id){
-      return res.status(400).json({
-        mensagem: "Verifique se todos os campos estão preenchidos",
-        detalhes: error.message
-      });
+  const { nome, idade, altura, peso } = req.body;
+
+  // BUG-03: validação sanitária também no PUT
+  if (!nome || idade === undefined || altura === undefined || peso === undefined) {
+    return res.status(400).json({ erro: 'Verifique se todos os campos estão preenchidos' });
   }
-  const {imc,status}=calcularIMC(Number(peso),Number(altura));
-  try {
-      const [rows] = await db.execute('UPDATE `pacientes` SET `nome` = ?, `idade` = ?, `altura` = ?, `peso` = ?, `imc` = ?, `status` = ? WHERE `pacientes`.`id` = ?;', [nome,idade,altura,peso,imc,status,id]);
-      res.status(200).json({mensagem:"Paciente atualizado com sucesso."  
-      });
-  } catch (error) {
-    res.status(500).json({
-      mensagem: "Erro Interno do Servidor",
-      detalhes: error.message
-    });
+  if (Number(altura) <= 0 || Number(peso) <= 0) {
+    return res.status(400).json({ erro: 'Altura e peso devem ser maiores que zero' });
   }
-})
+  if (Number(idade) < 0 || Number(idade) > 120) {
+    return res.status(400).json({ erro: 'Idade deve estar entre 0 e 120 anos' });
+  }
+
+  const { valor: imc, status } = calcularIMC(peso, altura);
+  const sql = 'UPDATE pacientes SET nome=?, idade=?, altura=?, peso=?, imc=?, status=? WHERE id=?';
+
+  db.query(sql, [nome, idade, altura, peso, imc, status, id], (err, result) => {
+    if (err) return res.status(500).json({ erro: 'Erro no servidor' });
+
+    // BUG-02: se nenhuma linha foi afetada, o ID não existe → 404
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ erro: 'Paciente não encontrado' });
+    }
+    return res.status(200).json({ mensagem: 'Paciente atualizado com sucesso.' });
+  });
+});
 
 app.delete('/paciente/:id', async (req, res) => {
   const { id } = req.params;
@@ -111,7 +118,7 @@ app.delete('/paciente/:id', async (req, res) => {
         detalhes: error.message
       });
     }
-    res.status(200).json({mensagem:"Paciente apagado com sucesso"});
+    res.status(200).json({ mensagem: "Paciente apagado com sucesso" });
   } catch (error) {
     res.status(500).json({
       mensagem: "Erro Interno do Servidor",
@@ -119,6 +126,7 @@ app.delete('/paciente/:id', async (req, res) => {
     });
   }
 })
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+if (require.main === module) {
+  app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
+}
+module.exports = app;
