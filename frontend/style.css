@@ -1,0 +1,249 @@
+/* ---------- base ---------- */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #f5f6f4;
+  color: #2b2b2b;
+  line-height: 1.5;
+  padding-bottom: 48px;
+}
+
+header {
+  background: #2e7d32;
+  color: #fff;
+  padding: 28px 16px;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+header h1 {
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+}
+
+header p {
+  margin-top: 4px;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: grid;
+  gap: 22px;
+}
+
+
+/* ---------- cards ---------- */
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 22px;
+  border: 1px solid #e6e6e6;
+}
+
+.card h2 {
+  font-size: 1.15rem;
+  color: #2e7d32;
+  margin-bottom: 14px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.card-header h2 {
+  margin-bottom: 0;
+}
+
+
+/* ---------- formulário ---------- */
+
+form {
+  display: grid;
+  gap: 12px;
+}
+
+label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #4a4a4a;
+}
+
+input {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid #d0d0d0;
+  border-radius: 5px;
+  font-size: 0.95rem;
+  background: #fdfdfd;
+}
+
+input:focus {
+  outline: 2px solid #2e7d32;
+  outline-offset: 1px;
+  border-color: transparent;
+}
+
+.botoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+
+/* ---------- botões ---------- */
+
+button {
+  padding: 9px 18px;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: #2e7d32;
+  color: #fff;
+}
+
+button:hover { background: #256428; }
+button:active { transform: translateY(1px); }
+
+button.secundario {
+  background: #ececec;
+  color: #333;
+}
+button.secundario:hover { background: #dedede; }
+
+button.editar   { background: #1565c0; }
+button.editar:hover { background: #0f4f99; }
+
+button.perigo   { background: #c62828; }
+button.perigo:hover { background: #a01f1f; }
+
+
+/* ---------- tabela ---------- */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+th, td {
+  padding: 10px 8px;
+  text-align: left;
+  border-bottom: 1px solid #ededed;
+  vertical-align: middle;
+}
+
+th {
+  background: #f1f8e9;
+  color: #2e7d32;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+tbody tr:hover {
+  background: #fafbf9;
+}
+
+td button {
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  margin-right: 4px;
+}
+
+
+/* ---------- badges ---------- */
+
+.badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge.abaixo    { background: #fff1e0; color: #b45309; }
+.badge.normal    { background: #e6f4e7; color: #2e7d32; }
+.badge.sobre     { background: #fef6d8; color: #a06b00; }
+.badge.obesidade { background: #fde8e8; color: #b91c1c; }
+
+
+/* ---------- mensagens ---------- */
+
+.mensagem {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 5px;
+  font-size: 0.88rem;
+}
+
+.mensagem.sucesso {
+  background: #e6f4e7;
+  color: #23661f;
+  border: 1px solid #b8dcc0;
+}
+
+.mensagem.erro {
+  background: #fde8e8;
+  color: #a01f1f;
+  border: 1px solid #f2b8b8;
+}
+
+.vazio,
+.loading {
+  text-align: center;
+  color: #6b6b6b;
+  padding: 18px;
+  font-size: 0.92rem;
+}
+
+
+/* ---------- responsivo ---------- */
+
+@media (max-width: 700px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead { display: none; }
+
+  tr {
+    background: #fff;
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border: 1px solid #e6e6e6;
+    border-radius: 6px;
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    border: none;
+    padding: 6px 0;
+    font-size: 0.9rem;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #2e7d32;
+    margin-right: 12px;
+  }
+}
